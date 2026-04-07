@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'Spline Sans Mono', monospace;
+  --font-heading: 'Gasoek One', sans-serif;
+
+  --color-outer-bg: #F5F5F5;
+  --color-inner-bg: #FFFFFF;
+  --color-outer-bg-dark: #121212;
+  --color-inner-bg-dark: #1E1E1E;
+}
+
+@layer base {
+  html.fonts-loading body {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  html, body {
+    @apply min-h-screen w-full m-0 p-0 font-sans antialiased text-neutral-900;
+  }
+
+  body {
+    background-color: var(--color-outer-bg);
+    transition: background-color 0.3s ease;
+  }
+
+  html.dark body {
+    background-color: var(--color-outer-bg-dark);
+    @apply text-neutral-50;
+  }
+
+
+}

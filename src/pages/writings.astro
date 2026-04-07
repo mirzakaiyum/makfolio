@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+import WritingCard from '../components/WritingCard.astro';
+import { getCollection } from 'astro:content';
+
+const allWritings = (await getCollection('writings', ({ data }: any) => !data.draft))
+  .sort((a: any, b: any) => b.data.date.valueOf() - a.data.date.valueOf());
+const writings = allWritings.slice(0, 10);
+const hasMore = allWritings.length > 10;
+---
+
+<Layout>
+  <div class="flex flex-col gap-20">
+
+    <!-- Header -->
+    <section class="opacity-0 flex flex-col gap-6">
+      <div class="inline-flex items-center px-5 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 w-max select-none">
+        <span class="text-[11px] font-mono tracking-[0.15em] uppercase text-neutral-500 dark:text-neutral-400 font-medium">{allWritings.length} Articles</span>
+      </div>
+      <h1 class="text-4xl font-heading text-neutral-900 dark:text-white">Writings Archive</h1>
+      <p class="text-neutral-500 dark:text-neutral-400 text-lg md:text-xl leading-relaxed max-w-2xl font-normal">
+        Thoughts on engineering, craft, and the practice of building great software.
+      </p>
+    </section>
+
+    <!-- Writing list -->
+    <section class="opacity-0 flex flex-col gap-0 relative">
+      <div id="writings-list" class="flex flex-col w-full">
+        {writings.map((post: any) => (
+          <WritingCard post={post} />
+        ))}
+      </div>
+      
+      {hasMore && (
+        <div id="infinite-scroll-trigger" class="w-full flex justify-center py-10 opacity-0 transition-opacity duration-300">
+          <svg class="animate-spin h-6 w-6 text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      )}
+    </section>
+
+  </div>
+
+  <script>
+    import { animate, inView } from "motion";
+    inView("section", (element) => {
+      animate(element, { opacity: [0, 1], y: [30, 0] }, { duration: 0.7, ease: [0.16, 1, 0.3, 1] });
+    }, { margin: "-10% 0px" });
+
+    const trigger = document.getElementById('infinite-scroll-trigger');
+    const list = document.getElementById('writings-list');
+    let page = 1;
+    let loading = false;
+
+    if (trigger && list) {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !loading) {
+          loading = true;
+          trigger.style.opacity = '1';
+          
+          page += 1;
+          fetch(`/partials/writings?page=${page}`)
+            .then(res => res.text())
+            .then(html => {
+              if (html.trim() === '') {
+                trigger.remove();
+                observer.disconnect();
+              } else {
+                list.insertAdjacentHTML('beforeend', html);
+                loading = false;
+              }
+            })
+            .catch(() => trigger.remove());
+        }
+      }, { rootMargin: '200px' });
+      
+      observer.observe(trigger);
+    }
+  </script>
+</Layout>

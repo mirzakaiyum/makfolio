@@ -1,0 +1,60 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { label: 'Homepage',     href: '/',     match: (p: string) => p === '/'                },
+  { label: 'Projects', href: '/projects', match: (p: string) => p.startsWith('/projects')},
+  { label: 'Writings', href: '/writings', match: (p: string) => p.startsWith('/writings')},
+  { label: 'About',    href: '/about',    match: (p: string) => p === '/about'           },
+  { label: 'Contact',  href: '/contact',  match: (p: string) => p === '/contact'         },
+];
+---
+<aside class="w-full lg:w-60 lg:h-screen lg:fixed top-0 left-0 shrink-0 flex flex-col justify-between py-6 px-4 lg:px-8 relative z-10 transition-colors duration-300">
+  <div class="flex flex-col gap-12">
+    <!-- Branding / Logo -->
+    <div class="flex items-center justify-between">
+      <a href="/" class="text-2xl font-heading tracking-tight hover:opacity-80 transition-opacity">MAK</br></a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="hidden lg:flex flex-col gap-6 mt-8">
+      <ul class="flex flex-col gap-5 font-mono text-[13px] uppercase tracking-[0.05em] text-neutral-500 dark:text-neutral-400">
+        {navLinks.map(({ label, href, match }) => {
+          const isActive = match(currentPath);
+          return (
+            <li>
+              <a href={href} class:list={[
+                "hover:text-neutral-900 dark:hover:text-white transition-colors relative group flex items-center",
+                isActive ? "text-neutral-900 dark:text-white" : ""
+              ]}>
+                <span class:list={[
+                  "absolute -left-5 w-1.5 h-1.5 rounded-full bg-neutral-900 dark:bg-white transition-all duration-300",
+                  isActive ? "opacity-100 scale-100" : "opacity-0 scale-50 group-hover:scale-100 group-hover:opacity-50"
+                ]}></span>
+                {label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Bottom Section: Toggle and Resumé -->
+  <div class="hidden lg:flex flex-col gap-8">
+    <ThemeToggle />
+
+    <!-- Mini Profile Card -->
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-800">
+        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Mak" alt="Mirza Kaiyum" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300" />
+      </div>
+      <div class="flex flex-col">
+        <span class="text-sm font-bold text-neutral-900 dark:text-neutral-100">Mirza Kaiyum</span>
+        <span class="text-xs text-neutral-500 font-mono mt-0.5">Product Engineer</span>
+      </div>
+    </div>
+  </div>
+</aside>
