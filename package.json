@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.7",
+    "@astrojs/netlify": "^7.0.6",
     "@astrojs/react": "^5.0.3",
     "@fontsource/gasoek-one": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
