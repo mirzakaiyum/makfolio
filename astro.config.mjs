@@ -7,11 +7,13 @@ import cloudflare from '@astrojs/cloudflare';
 
 import netlify from '@astrojs/netlify';
 
+import vercel from '@astrojs/vercel';
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
   },
 
-  adapter: netlify()
+  adapter: vercel()
 });
